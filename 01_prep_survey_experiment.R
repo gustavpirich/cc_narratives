@@ -136,11 +136,11 @@ ggplot(descriptive_stats_1, aes(x = factor(treatment), y = Average_Count, fill =
   labs(
     title = "Green-Tech Hero - Intensive Margin",
     subtitle = "When you think about renewable energy companies and green technology, which of the following terms would associate with it?",
-    x = "Treatment Group",
+    x = "Treatment Status",
     y = "Average Adjective Count",
     fill = "Role"
   ) +
-  scale_x_discrete(labels = c("Control (0)", "Treatment (1)")) +
+  scale_x_discrete(labels = c("Control", "Treatment")) +
   theme_minimal() +
   theme(
     plot.title = element_text(hjust = 0.5, face = "bold", size = 18),
@@ -507,13 +507,6 @@ approval_vars <- c("Q1_6", "Q3_1", "Q4_1")
 
 
 
-
-
-
-
-
-
-
 # 3. Ensure Likert Scale Variables are Ordered Factors
 # ---------------------------------------------------------------
 # Define Likert scale levels in order
@@ -710,7 +703,6 @@ df_long <- df_cleaned_3 %>%
 
 # Create the summary statistics table
 summary_table <- df_long %>%
-  filter(!is.na(Response)) %>%  # Exclude missing values if desired
   group_by(treatment, Question, Response) %>%
   summarise(Count = n(), .groups = 'drop') %>%
   group_by(treatment, Question) %>%
@@ -811,3 +803,89 @@ formatted_table
 # =============================================================================
 
 
+
+# Replace "df_cleaned_3" with your actual data frame
+# Reshape data for ggplot
+data_long <- df_cleaned_3 %>%
+  select(treatment, Q1_6, Q4_1, Q3_1) %>%
+  pivot_longer(cols = -treatment, names_to = "Variable", values_to = "Value") %>%
+  mutate(Variable = case_when(
+    Variable == "Q1_6" ~ "Private companies are the most important actors in the fight against climate change",
+    Variable == "Q3_1" ~ "I support expanding subsidies to renewable energies such as wind and solar power",
+    Variable == "Q4_1" ~ "I support investing more in green jobs and businesses",
+    TRUE ~ Variable
+  ))
+
+# Create boxplots by treatment group
+ggplot(data_long, aes(x = treatment, y = Value, fill = treatment)) +
+  geom_boxplot(outlier.shape = NA, color = "black", width = 0.5, size = 0.8, alpha = 0.6) +
+  stat_boxplot(geom = "errorbar", width = 0.3, size = 0.8) + # Add caps to whiskers
+  facet_wrap(~Variable, scales = "free_y", ncol = 3, strip.position = "top") +
+  theme_minimal() +
+  labs(
+    title = "Comparison of Responses by Treatment Group",
+    x = "Treatment Group",
+    y = "Response Value"
+  ) +
+  theme(
+    legend.position = "none",
+    strip.text = element_text(size = 12 ),
+    axis.text.x = element_text(size = 12 ),
+    axis.text.y = element_text(size = 12 ),
+    axis.title.x = element_text(size = 14 ),
+    axis.title.y = element_text(size = 14 ),
+    plot.title = element_text(hjust = 0.5, size = 1 ),
+    #panel.grid.major.y = element_line(color = "gray90", size = 0.5), # Horizontal grid lines for y-axis
+    axis.line.y = element_line(color = "black", size = 0.6), # Add thicker y-axis line
+    axis.line.x = element_line(color = "black", size = 0.6) # Add x-axis line
+  ) +
+  scale_y_continuous(
+    breaks = seq(0, 100, by = 20), # Specify tick marks at intervals of 20
+    limits = c(0, 100) # Ensure y-axis range
+  ) +
+  scale_fill_manual(values = c("Treatment" = "blue", "Control" = "lightblue"))
+
+
+
+
+# Reshape data for ggplot
+data_long <- df_cleaned_3 %>%
+  select(treatment, Q1_6, Q4_1, Q3_1) %>%
+  pivot_longer(cols = -treatment, names_to = "Variable", values_to = "Value") %>%
+  mutate(Variable = case_when(
+    Variable == "Q1_6" ~ "Private companies are the most important actors in the fight against climate change",
+    Variable == "Q3_1" ~ "I support expanding subsidies to renewable energies such as wind and solar power",
+    Variable == "Q4_1" ~ "I support investing more in green jobs and businesses",
+    TRUE ~ Variable
+  ))
+
+# Create horizontal boxplots by treatment group
+ggplot(data_long, aes(x = treatment, y = Value, fill = treatment)) +
+  geom_boxplot(outlier.shape = NA, color = "black", width = 0.5, size = 0.8, alpha = 0.6, fatten = 0) + 
+  stat_boxplot(geom = "errorbar", width = 0.3, size = 0.8) + # Add caps to whiskers
+  facet_wrap(~Variable, scales = "free_x", ncol = 1, strip.position = "top") +
+  coord_flip() + # Flip the coordinates for horizontal alignment
+  theme_minimal() +
+  #labs(
+   # title = "Comparison of Responses by Treatment Group",
+  #  x = "Response Value",
+   # y = "Treatment Group"
+  #) +
+  theme(
+    legend.position = "none",
+    strip.text = element_text(size = 12 ),
+    axis.text.x = element_text(size = 12 ),
+    axis.text.y = element_text(size = 12 ),
+    axis.title.x = element_text(size = 14 ),
+    axis.title.y = element_text(size = 14 ),
+    plot.title = element_text(hjust = 0.5, size = 14 ),
+    axis.line.y = element_line(color = "black", size = 0.6), # Add thicker y-axis line
+    axis.line.x = element_line(color = "black", size = 0.6) # Add x-axis line
+  ) +
+  scale_y_continuous(
+    breaks = seq(0, 100, by = 20), # Specify tick marks at intervals of 20
+    limits = c(0, 100) # Ensure y-axis range
+  ) +
+  scale_fill_manual(values = c("Treatment" = "blue", "Control" = "lightblue"))
+
+  
