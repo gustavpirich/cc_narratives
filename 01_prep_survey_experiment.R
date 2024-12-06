@@ -8,7 +8,7 @@
 # Load Libraries
 # =============================================================================
 # Install necessary libraries if not already installed
-pacman::p_load(tidyverse, here, hmisc, reshape2, stargazer, tidyr)
+pacman::p_load(tidyverse, here, hmisc, reshape2, stargazer, tidyr, kable)
 
 # =============================================================================
 # Set Paths
@@ -58,13 +58,43 @@ df_cleaned_3$hero_dummy <- ifelse(df_cleaned_3$hero > 0, 1, 0)
 df_cleaned_3$villain_dummy <- ifelse(df_cleaned_3$villain > 0, 1, 0)
 df_cleaned_3$victim_dummy <- ifelse(df_cleaned_3$victim > 0, 1, 0)
 
+# =============================================================================
+# Preparation of descriptive statistics
+# =============================================================================
 
+# Ensure the relevant variables are factors
+df_cleaned_3$Q2 <- as.factor(df_cleaned_3$Q2)
+df_cleaned_3$Q4 <- as.factor(df_cleaned_3$Q4)
+df_cleaned_3$Q3 <- as.factor(df_cleaned_3$Q3)
+df_cleaned_3$Q48 <- as.factor(df_cleaned_3$Q48)
 
+# List of variables to summarize
+variables <- c("Q2", "Q4", "Q3", "Q48")
 
+# Loop through each variable and create separate tables
+for (var in variables) {
+  # Get the factor levels and their counts
+  factor_var <- as.factor(df_cleaned_3[[var]])
+  counts <- summary(factor_var)
+  
+  # Combine into a data frame
+  question_table <- data.frame(
+    Level = names(counts),
+    Count = as.numeric(counts),
+    Share = round(as.numeric(counts) / sum(counts), 4) # Share as a proportion rounded to 4 decimals
+  )
+  
+  # Print a header for clarity
+  cat("\n### Summary for", var, "###\n")
+  
+  # Display the table in LaTeX format
+  print(kable(question_table, format = "latex", col.names = c("Level", "Count", "Share")))
+}
 
 # =============================================================================
 # Preparation of descriptive statistics
 # =============================================================================
+
 descriptive_stats_1 <- df_cleaned_3 %>% 
   #filter(!(hero == 1 & villain == 0 & victim == 0 |
   #           hero == 0 & villain == 1 & victim == 0 |
