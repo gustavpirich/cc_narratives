@@ -20,8 +20,11 @@ pacman::p_load(tidyverse, here, hmisc, reshape2, stargazer, tidyr, kable)
 # =============================================================================
 # Load Data
 # =============================================================================
-survey <- read.csv("C:\\Users\\GustavPirich\\Dropbox\\climate_nature_narratives\\input\\rawdata\\experiment\\pretest\\climate_change_narratives_November+29,+2024_01.40.csv")
+survey <- read.csv("C:\\Users\\GustavPirich\\Dropbox\\climate_nature_narratives\\input\\rawdata\\experiment_pretest\\revised_test_no_1.csv")
 
+
+survey %>% 
+  filter()
 # storing the second row as subheaders toc check up 
 subheaders <- c(survey[1:2, ])
 subheaders$Q0
