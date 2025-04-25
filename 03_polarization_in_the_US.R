@@ -9,15 +9,11 @@ dataset_tweets_all
 
 
 dataset_tweets_all %>%
-  filter(pricing_hero == 1) %>%
-  select(year, original_text) %>%
-  view()
-
+  select(year, original_text)
 
 dataset_tweets_all$republicans_hero
 dataset_tweets_all$republicans_villain
 
-dataset_tweets_all$
 
 feols(senan_trust ~ year | author_id, data = dataset_tweets_all)
 
