@@ -5,4 +5,6 @@ library(here)
 survey <- read_sav(here("data", "CCAM SPSS Data 2008-2023.sav"))
 
 # View the first few rows
-view(survey)
+head(survey)
+
+
